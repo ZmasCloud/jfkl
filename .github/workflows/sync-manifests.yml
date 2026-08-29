@@ -2,7 +2,7 @@ name: Sync Manifests
 
 on:
   schedule:
-  - cron: '0 6-22/1 * * *'   # 每天 UTC 0:00 执行（北京时间 8:00）
+  - cron: '0 6-22/1 * * *'
   workflow_dispatch:
 
 jobs:
@@ -13,6 +13,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -40,4 +43,4 @@ jobs:
           git config --local user.name "GitHub Action"
           git add public/manifest-cache/
           git commit -m "Update manifest cache" || exit 0
-          git push
+          git push origin HEAD:${{ github.ref_name }} --force-with-lease
